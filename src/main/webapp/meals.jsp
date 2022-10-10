@@ -13,6 +13,7 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<p><a href="meals?action=add">Add Meal</a></p>
 <table border="2">
     <tr>
         <th>Date</th>
@@ -26,8 +27,8 @@
             <td>${f:formatLocalDateTime(mealsTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
             <td>${mealsTo.description}</td>
             <td>${mealsTo.calories}</td>
-            <td></td>
-            <td></td>
+            <td><a href="meals?action=edit&id=<c:out value="${mealsTo.id}"/>">Update</a></td>
+            <td><a href="meals?action=delete&id=<c:out value="${mealsTo.id}"/>">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
