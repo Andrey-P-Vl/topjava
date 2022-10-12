@@ -17,16 +17,18 @@
 <form method="POST" action="meals" name="frmAddMeal">
     DateTime:<input type="datetime-local" name="datetime"
     <c:choose>
-        <c:when test="${meal eq null}">value="<c:out value="${meal.dateTime}" />"/> <br/></c:when>
-        <c:otherwise>value="<c:out value="${f:formatLocalDateTime(meal.dateTime, 'yyyy-MM-dd HH:mm')}" />" /> <br/></c:otherwise>
+        <c:when test="${meal eq null}">value="${meal.dateTime}"/> <br/></c:when>
+        <c:otherwise>value="${f:formatLocalDateTime(meal.dateTime, 'yyyy-MM-dd HH:mm')}" /> <br/></c:otherwise>
     </c:choose>
     Description:<input type="text" name="description"
-                       value="<c:out value="${meal.description}" />"/> <br/>
-    Calories:<input type="text" name="calories"
-                    value="<c:out value="${meal.calories}" />"/> <br/>
+                       value="${meal.description}"/> <br/>
+    Calories:<input type="number" name="calories"
+                    value="${meal.calories}"/> <br/>
     <input type="hidden" name="id"
-           value="<c:out value="${meal.id}" />"/> <br/>
+           value="${meal.id}"/> <br/>
     <input type="submit" value="${meal eq null ? 'Add': 'Edit'}">
+    <button onclick="location.href='meals'" type="button">
+        Back</button>
 </form>
 </body>
 </html>

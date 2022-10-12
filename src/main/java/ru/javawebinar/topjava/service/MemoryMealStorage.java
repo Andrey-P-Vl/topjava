@@ -1,50 +1,48 @@
 package ru.javawebinar.topjava.service;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MemoryMealStorage implements MealStorage {
 
-    private final List<Meal> mealsToList;
+    private final CopyOnWriteArrayList<Meal> mealList;
 
     public MemoryMealStorage() {
-        this.mealsToList = Collections.synchronizedList(new ArrayList<>());
+        this.mealList = new CopyOnWriteArrayList<>();
+        MealsUtil.generateListMeals().forEach(this::add);
     }
 
     @Override
-    public void add(Meal meal) {
-        mealsToList.add(meal);
+    public Meal add(Meal meal) {
+        meal.setId(this.mealList.size() + 1);
+        mealList.add(meal);
+        return meal;
     }
 
     @Override
-    public Meal getById(Integer id) {
-        synchronized (mealsToList) {
-            return mealsToList.stream().filter(meal -> meal.getId().equals(id)).findAny().orElse(null);
-        }
+    public Meal getById(int id) {
+        return mealList.stream().filter(meal -> meal.getId().equals(id)).findAny().orElse(null);
     }
 
     @Override
     public List<Meal> getAll() {
-        return mealsToList;
+        return mealList.subList(0, mealList.size());
     }
 
     @Override
-    public void update(Integer id, Meal meal) {
-        synchronized (mealsToList) {
-            Meal mealToUpdate = getById(id);
-            mealToUpdate.setCalories(meal.getCalories());
-            mealToUpdate.setDateTime(meal.getDateTime());
-            mealToUpdate.setDescription(meal.getDescription());
-        }
+    public Meal update(Meal meal) {
+        Meal mealToUpdate = getById(meal.getId());
+        mealToUpdate.setCalories(meal.getCalories());
+        mealToUpdate.setDateTime(meal.getDateTime());
+        mealToUpdate.setDescription(meal.getDescription());
+        return meal;
     }
 
     @Override
-    public void delete(Integer id) {
-        synchronized (mealsToList) {
-            mealsToList.removeIf(meal -> meal.getId().equals(id));
-        }
+    public void delete(int id) {
+        mealList.removeIf(meal -> meal.getId().equals(id));
     }
 }
