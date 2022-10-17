@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
+    private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
     private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
-    private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
 
     @Override
     public Meal save(Meal meal, int userId) {
@@ -67,9 +67,9 @@ public class InMemoryMealRepository implements MealRepository {
 
     public List<Meal> getFilteredByPredicate(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMeals = repository.get(userId);
-        return userMeals == null ? new ArrayList<>() : userMeals.values().stream().
-                filter(filter).
-                sorted(Comparator.comparing(Meal::getDateTime).reversed()).
-                collect(Collectors.toList());
+        return userMeals == null ? new ArrayList<>() : userMeals.values().stream()
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
     }
 }
