@@ -19,4 +19,12 @@ public class DateTimeUtil {
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
+
+    public static LocalDate toLocalDate(String date) {
+        return date.equals("") ? null : LocalDate.parse(date);
+    }
+
+    public static LocalTime toLocalTime(String time) {
+        return time.equals("") ? null : LocalTime.parse(time);
+    }
 }

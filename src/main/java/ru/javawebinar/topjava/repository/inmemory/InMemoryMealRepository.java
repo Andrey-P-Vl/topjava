@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,6 +57,12 @@ public class InMemoryMealRepository implements MealRepository {
         log.info("get by Date");
         return getFilteredByPredicate(userId, meal ->
                 DateTimeUtil.isBetweenDate(meal.getDate(), startDate, endDate));
+    }
+
+    public List<Meal> getFilteredByTime(int userId, LocalTime startTime, LocalTime endTime) {
+        log.info("get by Time");
+        return getFilteredByPredicate(userId, meal ->
+                DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
 
     public List<Meal> getFilteredByPredicate(int userId, Predicate<Meal> filter) {
