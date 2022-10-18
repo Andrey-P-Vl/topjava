@@ -16,9 +16,9 @@
         }
 
         dl {
-             background: none repeat scroll 0 0 #FAFAFA;
-             margin: 8px 0;
-             padding: 0;
+            background: none repeat scroll 0 0 #FAFAFA;
+            margin: 8px 0;
+            padding: 0;
         }
 
         dt {
@@ -38,7 +38,8 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="post" action="meals">
+    <form method="get" action="meals">
+        <input type="hidden" name="action" value="filter">
         <dl>
             <dt>От даты (включая)</dt>
             <dd><input type="date" name="startDate" value="${startDate}"/></dd>
@@ -55,7 +56,6 @@
             <dt>До времени (исключая)</dt>
             <dd><input type="time" name="endTime" value="${endTime}"/></dd>
         </dl>
-        <input type="hidden" name="isFiltered" value="true">
         <input type="submit" value="Filter">
     </form>
     <br>
