@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,7 +58,13 @@ public class InMemoryMealRepository implements MealRepository {
         return getFilteredByPredicate(userId, filter -> true);
     }
 
-    public List<Meal> getFilteredByPredicate(int userId, Predicate<Meal> filter) {
+    public List<Meal> getFilteredByDate(int userId, LocalDate startDate, LocalDate endDate) {
+        log.info("get by Date");
+        return getFilteredByPredicate(userId, meal ->
+                DateTimeUtil.isBetweenDates(meal.getDate(), startDate, endDate));
+    }
+
+    private List<Meal> getFilteredByPredicate(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMeals = repository.get(userId);
         return userMeals == null ? Collections.emptyList() : userMeals.values().stream()
                 .filter(filter)
