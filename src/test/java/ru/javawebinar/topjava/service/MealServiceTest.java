@@ -10,9 +10,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
@@ -37,42 +38,42 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(START_MEAL_ID, USER_ID);
+        Meal meal = service.get(FIRST_USER_MEAL_ID, USER_ID);
         assertMatch(meal, userMeal1);
     }
 
     @Test
     public void getForeign() {
-        assertThrows(NotFoundException.class, () -> service.get(START_MEAL_ID + 1, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(SECOND_USER_MEAL_ID, ADMIN_ID));
     }
 
     @Test
     public void delete() {
-        service.delete(START_MEAL_ID + 1, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(START_MEAL_ID + 1, USER_ID));
+        service.delete(SECOND_USER_MEAL_ID, USER_ID);
+        assertThrows(NotFoundException.class, () -> service.get(SECOND_USER_MEAL_ID, USER_ID));
     }
 
     @Test
-    public void deletedNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(START_MEAL_ID + 100, USER_ID));
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_EXIST_MEAL_ID, USER_ID));
     }
 
     @Test
-    public void deletedNotFound2() {
-        assertThrows(NotFoundException.class, () -> service.delete(START_MEAL_ID + 7, USER_ID));
+    public void deleteForeign() {
+        assertThrows(NotFoundException.class, () -> service.delete(FIRST_ADMIN_MEAL_ID, USER_ID));
     }
 
     @Test
     public void getBetweenInclusive() {
-        List<Meal> all = service.getBetweenInclusive(DateTimeUtil.parseLocalDate("2022-09-16"),
-                DateTimeUtil.parseLocalDate("2022-09-16"), USER_ID);
+        List<Meal> all = service.getBetweenInclusive(LocalDate.of(2022, Month.SEPTEMBER, 16),
+                LocalDate.of(2022, Month.SEPTEMBER, 16), USER_ID);
         assertMatch(all, userMeal1, userMeal2, userMeal3);
     }
 
     @Test
-    public void getBetweenInclusive2() {
+    public void getBetweenInclusiveWithNullBorder() {
         List<Meal> all = service.getBetweenInclusive(null,
-                DateTimeUtil.parseLocalDate("2022-09-16"), USER_ID);
+                LocalDate.of(2022, Month.SEPTEMBER, 16), USER_ID);
         assertMatch(all, userMeal1, userMeal2, userMeal3);
     }
 
@@ -84,20 +85,20 @@ public class MealServiceTest {
 
     @Test
     public void update() {
-        Meal updated = getUpdated();
+        Meal updated = getUpdatedUserMeal();
         service.update(updated, USER_ID);
-        assertMatch(service.get(START_MEAL_ID, USER_ID), getUpdated());
+        assertMatch(service.get(FIRST_USER_MEAL_ID, USER_ID), getUpdatedUserMeal());
     }
 
     @Test
-    public void duplicateUpdate() {
+    public void updateWithDuplicate() {
         Meal updated = getUpdatedWithDuplicate();
         assertThrows(DataAccessException.class, () -> service.update(updated, USER_ID));
     }
 
     @Test
-    public void foreignUpdate() {
-        Meal updated = getUpdated();
+    public void updateForeign() {
+        Meal updated = getUpdatedUserMeal();
         assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
     }
 
@@ -113,6 +114,7 @@ public class MealServiceTest {
 
     @Test
     public void duplicateCreate() {
-        assertThrows(DataAccessException.class, () -> service.create(getNew(), ADMIN_ID));
+        Meal mealWithDuplicateDateTime = getNew();
+        assertThrows(DataAccessException.class, () -> service.create(mealWithDuplicateDateTime, ADMIN_ID));
     }
 }
