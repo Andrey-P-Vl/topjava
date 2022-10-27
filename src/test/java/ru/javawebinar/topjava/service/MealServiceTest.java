@@ -115,6 +115,7 @@ public class MealServiceTest {
     @Test
     public void duplicateCreate() {
         Meal mealWithDuplicateDateTime = getNew();
+        mealWithDuplicateDateTime.setDateTime(adminMeal1.getDateTime());
         assertThrows(DataAccessException.class, () -> service.create(mealWithDuplicateDateTime, ADMIN_ID));
     }
 }
