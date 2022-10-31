@@ -32,14 +32,14 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final StringBuilder timeOfExecuteTests = new StringBuilder();
+    private static final StringBuilder timeOfExecuteTests = new StringBuilder("All duration of tests: \n");
 
     @Autowired
     private MealService service;
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
-        public final String templateMessage = "Test %s finished, time taken %d ms";
+        public final String templateMessage = "%25s - %3d ms";
 
         protected void finished(long nanos, Description description) {
             String currentMessage = String.format(templateMessage, description.getMethodName(),
@@ -51,7 +51,6 @@ public class MealServiceTest {
 
     @AfterClass
     public static void printTime() {
-        log.info("All duration of tests:");
         log.info(timeOfExecuteTests.toString());
     }
 
