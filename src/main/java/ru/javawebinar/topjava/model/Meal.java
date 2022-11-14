@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 @NamedQueries({
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
@@ -49,6 +50,9 @@ public class Meal extends AbstractBaseEntity {
     private User user;
 
     public Meal() {
+        this.dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        this.description = "";
+        this.calories = 300;
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
