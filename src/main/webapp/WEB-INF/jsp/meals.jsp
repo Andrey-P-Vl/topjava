@@ -10,7 +10,7 @@
 <section>
     <h2><spring:message code="meal.title"/></h2>
 
-    <form method="post" action="/topjava/meals/filter">
+    <form method="get" action="meals/filter">
         <dl>
             <dt><spring:message code="meal.fromDate"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>

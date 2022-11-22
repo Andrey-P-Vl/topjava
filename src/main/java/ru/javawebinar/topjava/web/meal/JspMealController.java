@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
@@ -27,8 +28,9 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping("/create")
-    public String newMeal(Model model) {
-        model.addAttribute("meal", new Meal());
+    public String create(Model model) {
+        model.addAttribute("meal",
+                new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
         return "mealForm";
     }
 
@@ -38,7 +40,7 @@ public class JspMealController extends AbstractMealController {
         return "mealForm";
     }
 
-    @PostMapping("/filter")
+    @GetMapping("/filter")
     public String filter(HttpServletRequest request, Model model) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
@@ -48,8 +50,8 @@ public class JspMealController extends AbstractMealController {
         return "meals";
     }
 
-    @PostMapping()
-    public String modify(HttpServletRequest request) {
+    @PostMapping
+    public String save(HttpServletRequest request) {
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));

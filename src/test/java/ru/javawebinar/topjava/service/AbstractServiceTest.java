@@ -13,9 +13,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.TimingRules;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
@@ -40,9 +42,7 @@ public abstract class AbstractServiceTest {
 
     public boolean isJpaProfile() {
         return Arrays.stream(environment.getActiveProfiles())
-                .filter(p -> p.contains("jpa"))
-                .findAny()
-                .orElse(null) != null;
+                .noneMatch(Predicate.isEqual(Profiles.JDBC));
     }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
