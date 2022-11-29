@@ -6,9 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -17,9 +15,6 @@ import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
 
 public class MealRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + '/';
@@ -47,17 +41,28 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(MEAL_MATCHER.contentJson(meal1));
     }
 
-
     @Test
-    void getBetween() throws Exception {
-        String queryStartDateTime = "2020-01-30T09:00:00";
-        String queryEndDateTime = "2020-01-30T11:00:00";
-        perform(MockMvcRequestBuilders.get(REST_URL + "between?startDateTime=" +
-                queryStartDateTime + "&endDateTime=" + queryEndDateTime))
+    void filter() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-30")
+                .param("startTime", "09:00:00")
+                .param("endDate", "2020-01-30")
+                .param("endTime", "11:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal1), SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal1),
+                        SecurityUtil.authUserCaloriesPerDay())));
+    }
+
+    @Test
+    void filterWithNullParams() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(meals,
+                        SecurityUtil.authUserCaloriesPerDay())));
     }
 
     @Test
@@ -66,7 +71,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_MATCHER.contentJson(meals));
+                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(meals,
+                        SecurityUtil.authUserCaloriesPerDay())));
     }
 
     @Test
@@ -104,5 +110,4 @@ public class MealRestControllerTest extends AbstractControllerTest {
         MEAL_MATCHER.assertMatch(created, newMeal);
         MEAL_MATCHER.assertMatch(mealService.get(newId, USER_ID), newMeal);
     }
-
 }
