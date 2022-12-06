@@ -32,10 +32,28 @@ function deleteRow(id) {
     });
 }
 
+function filtered() {
+    $.ajax({
+        url: "ajax/meals/filter",
+        type: "GET",
+        // serialize https://stackoverflow.com/questions/7426085/jquery-getting-form-values-for-ajax-post
+        data: $("#filter").serialize()
+    }).done(function () {
+        updateTable();
+        successNoty("Filtered");
+    });
+}
+
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
     });
+}
+
+function clearData() {
+    //form reset https://stackoverflow.com/questions/3786694/how-to-reset-clear-form-through-javascript
+    $("#filter")[0].reset();
+    $.get(mealAjaxUrl, updateTable);
 }
 
 function save() {
